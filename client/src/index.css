@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-950 text-gray-100 font-mono antialiased;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  }
+
+  * {
+    @apply select-none;
+  }
+
+  button {
+    touch-action: manipulation;
+  }
+
+  input {
+    @apply select-text;
+  }
+}
