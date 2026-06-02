@@ -1,4 +1,4 @@
-import type { GamePhase, MatchLengthTier, RoundResult } from 'shared';
+import type { GamePhase, MatchLengthTier, RoundResult, Player } from 'shared';
 import { generateRoomCode } from './codegen';
 
 export interface CurrentRound {
@@ -12,15 +12,7 @@ export interface CurrentRound {
 export interface GameRoomInternal {
   code: string;
   phase: GamePhase;
-  players: {
-    id: string;
-    name: string;
-    score: number;
-    isHost: boolean;
-    isReady: boolean;
-    hasStopped: boolean;
-    wager: number | null;
-  }[];
+  players: Player[];
   targetScore: number | null;
   matchLengthTier: MatchLengthTier | null;
   roundNumber: number;
