@@ -6,10 +6,10 @@ import {
   type GameRoomInternal,
 } from '../game/roomManager';
 import {
-  toSnapshot, transitionToSettings, transitionToPreRound, transitionToTiming, setMatchLength,
+  toSnapshot, transitionToSettings, transitionToPreRound, transitionToTiming, setMatchLength, setRoundsMode,
 } from '../game/stateMachine';
 import {
-  computeRoundResult, applyRoundResult, checkWinCondition,
+  computeRoundResult, applyRoundResult, isGameOver, getMatchWinner,
 } from '../game/scoring';
 import {
   emitRoomCreated, emitRoomJoined, emitRoomStateUpdate,
@@ -25,10 +25,9 @@ function resolveRound(io: IO, room: GameRoomInternal): void {
   applyRoundResult(room, result);
   room.roundHistory.push(result);
 
-  const winnerId = checkWinCondition(room);
-  if (winnerId) {
+  if (isGameOver(room)) {
     room.phase = 'match_end';
-    emitMatchEnd(io, room.code, winnerId, toSnapshot(room));
+    emitMatchEnd(io, room.code, getMatchWinner(room), toSnapshot(room));
   } else {
     emitRoundResult(io, room.code, result, toSnapshot(room));
   }
@@ -48,6 +47,8 @@ function handleLeave(io: IO, socketId: string): void {
   room.roundHistory = [];
   room.targetScore = null;
   room.matchLengthTier = null;
+  room.gameMode = 'race';
+  room.roundsTotal = null;
   for (const p of room.players) {
     p.score = 0;
     p.isHost = true;
@@ -94,6 +95,19 @@ export function registerHandlers(io: IO): void {
     });
 
     socket.on('room:leave', () => handleLeave(io, socket.id));
+
+    socket.on('settings:choose_mode', ({ mode }) => {
+      const room = getRoomBySocketId(socket.id);
+      if (!room || room.phase !== 'settings') return;
+      const player = room.players.find(p => p.id === socket.id);
+      if (!player?.isHost) return;
+
+      if (mode === 'rounds') {
+        setRoundsMode(room);
+        transitionToPreRound(room);
+        emitRoomStateUpdate(io, room.code, toSnapshot(room));
+      }
+    });
 
     socket.on('settings:choose_length', ({ tier }) => {
       const room = getRoomBySocketId(socket.id);

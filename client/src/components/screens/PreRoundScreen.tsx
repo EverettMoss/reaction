@@ -56,7 +56,9 @@ export default function PreRoundScreen() {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm text-center">
-      <div className="text-xs text-gray-500 uppercase tracking-widest">Round {room.roundNumber}</div>
+      <div className="text-xs text-gray-500 uppercase tracking-widest">
+        Round {room.roundNumber}{room.roundsTotal !== null ? ` / ${room.roundsTotal}` : ''}
+      </div>
 
       <ScoreBoard players={room.players} targetScore={room.targetScore} myId={mySocketId} />
 

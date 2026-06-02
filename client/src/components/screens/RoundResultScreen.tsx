@@ -34,7 +34,9 @@ export default function RoundResultScreen() {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm text-center">
-      <div className="text-xs text-gray-500 uppercase tracking-widest">Round {room.roundNumber} Result</div>
+      <div className="text-xs text-gray-500 uppercase tracking-widest">
+        Round {room.roundNumber}{room.roundsTotal !== null ? ` / ${room.roundsTotal}` : ''} Result
+      </div>
 
       <div className="text-sm text-gray-400">
         Target: <span className="text-white font-bold">{formatMs(targetMs)}</span>

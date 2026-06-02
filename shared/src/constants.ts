@@ -15,6 +15,8 @@ export const ACCURACY_BONUSES = {
   ELITE:       { thresholdMs: 25, bonus: 1, label: 'Elite!'       },
 } as const;
 
+export const ROUNDS_MODE_TOTAL = 10;
+
 export const TARGET_INTERVAL_RANGE = { minMs: 1000, maxMs: 9999 };
 
 export const PRE_ROUND_DISPLAY_DURATION_MS = 3000;

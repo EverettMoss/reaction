@@ -7,12 +7,15 @@ export default function MatchEndScreen() {
 
   if (!room) return null;
 
-  const winnerId = room.players.reduce((best, p) =>
-    (best === null || p.score >= (room.players.find(x => x.id === best)?.score ?? 0)) ? p.id : best
-  , null as string | null);
+  const winnerId = room.players.length === 2 && room.players[0].score === room.players[1].score
+    ? null
+    : room.players.reduce((best, p) =>
+        best === null || p.score > (room.players.find(x => x.id === best)?.score ?? 0) ? p.id : best
+      , null as string | null);
 
-  const winner = room.players.find(p => p.id === winnerId);
-  const isWinner = mySocketId === winnerId;
+  const winner = winnerId ? room.players.find(p => p.id === winnerId) : null;
+  const isTie = winnerId === null;
+  const isWinner = !isTie && mySocketId === winnerId;
 
   const myRounds = room.roundHistory.filter(r => r.players[mySocketId ?? '']);
   const avgError = myRounds.length > 0
@@ -31,12 +34,14 @@ export default function MatchEndScreen() {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm text-center">
       <div>
-        <div className="text-6xl mb-2">{isWinner ? '🏆' : '💀'}</div>
+        <div className="text-6xl mb-2">{isTie ? '🤝' : isWinner ? '🏆' : '💀'}</div>
         <h2 className="text-3xl font-bold text-white">
-          {isWinner ? 'Victory!' : 'Defeated'}
+          {isTie ? "It's a Tie!" : isWinner ? 'Victory!' : 'Defeated'}
         </h2>
         <p className="text-gray-400 text-sm mt-1">
-          {winner?.name} wins with {winner?.score} points
+          {isTie
+            ? 'Both players finish with equal points'
+            : `${winner?.name} wins with ${winner?.score} points`}
         </p>
       </div>
 

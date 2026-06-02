@@ -23,7 +23,7 @@ export function emitRoundResult(io: IO, roomCode: string, result: RoundResult, r
   io.to(roomCode).emit('phase:round_result', { result, room });
 }
 
-export function emitMatchEnd(io: IO, roomCode: string, winnerId: string, room: GameRoomSnapshot): void {
+export function emitMatchEnd(io: IO, roomCode: string, winnerId: string | null, room: GameRoomSnapshot): void {
   io.to(roomCode).emit('phase:match_end', { winnerId, room });
 }
 

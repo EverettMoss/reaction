@@ -94,7 +94,7 @@ export function applyRoundResult(room: GameRoomInternal, result: RoundResult): v
     if (room.targetScore !== null) {
       player.score = applyBounceBack(player.score, delta, room.targetScore);
     } else {
-      player.score += delta;
+      player.score = Math.max(0, player.score + delta);
     }
 
     // Update streaks
@@ -108,10 +108,18 @@ export function applyRoundResult(room: GameRoomInternal, result: RoundResult): v
   }
 }
 
-export function checkWinCondition(room: GameRoomInternal): string | null {
-  if (room.targetScore === null) return null;
-  for (const player of room.players) {
-    if (player.score === room.targetScore) return player.id;
+export function isGameOver(room: GameRoomInternal): boolean {
+  if (room.gameMode === 'rounds' && room.roundsTotal !== null) {
+    return room.roundNumber >= room.roundsTotal;
   }
-  return null;
+  return room.players.some(p => p.score === room.targetScore && room.targetScore !== null);
+}
+
+export function getMatchWinner(room: GameRoomInternal): string | null {
+  if (room.gameMode === 'rounds') {
+    const [p1, p2] = room.players;
+    if (!p2 || p1.score === p2.score) return null;
+    return p1.score > p2.score ? p1.id : p2.id;
+  }
+  return room.players.find(p => p.score === room.targetScore)?.id ?? null;
 }

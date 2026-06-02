@@ -21,7 +21,7 @@ export type Action =
   | { type: 'TIMING_START'; timingStartedAt: number }
   | { type: 'I_STOPPED' }
   | { type: 'ROUND_RESULT'; result: RoundResult; room: GameRoomSnapshot }
-  | { type: 'MATCH_END'; winnerId: string; room: GameRoomSnapshot }
+  | { type: 'MATCH_END'; winnerId: string | null; room: GameRoomSnapshot }
   | { type: 'SET_ERROR'; message: string }
   | { type: 'CLEAR_ERROR' };
 

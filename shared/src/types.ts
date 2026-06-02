@@ -1,3 +1,5 @@
+export type GameMode = 'race' | 'rounds';
+
 export type GamePhase =
   | 'lobby'
   | 'settings'
@@ -53,10 +55,12 @@ export interface CurrentRoundSnapshot {
 export interface GameRoomSnapshot {
   code: string;
   phase: GamePhase;
+  gameMode: GameMode;
   players: Player[];
   targetScore: number | null;
   matchLengthTier: MatchLengthTier | null;
   roundNumber: number;
+  roundsTotal: number | null;
   currentRound: CurrentRoundSnapshot | null;
   roundHistory: RoundResult[];
   disconnectedPlayerName?: string;

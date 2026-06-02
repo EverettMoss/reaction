@@ -1,4 +1,4 @@
-import type { GamePhase, MatchLengthTier, RoundResult, Player } from 'shared';
+import type { GamePhase, GameMode, MatchLengthTier, RoundResult, Player } from 'shared';
 import { generateRoomCode } from './codegen';
 
 export interface CurrentRound {
@@ -12,10 +12,12 @@ export interface CurrentRound {
 export interface GameRoomInternal {
   code: string;
   phase: GamePhase;
+  gameMode: GameMode;
   players: Player[];
   targetScore: number | null;
   matchLengthTier: MatchLengthTier | null;
   roundNumber: number;
+  roundsTotal: number | null;
   currentRound: CurrentRound | null;
   roundHistory: RoundResult[];
 }
@@ -28,10 +30,12 @@ export function createRoom(socketId: string, playerName: string): GameRoomIntern
   const room: GameRoomInternal = {
     code,
     phase: 'lobby',
+    gameMode: 'race',
     players: [{ id: socketId, name: playerName, score: 0, streak: 0, isHost: true, isReady: false, hasStopped: false, wager: null }],
     targetScore: null,
     matchLengthTier: null,
     roundNumber: 0,
+    roundsTotal: null,
     currentRound: null,
     roundHistory: [],
   };

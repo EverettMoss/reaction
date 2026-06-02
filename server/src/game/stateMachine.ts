@@ -1,4 +1,4 @@
-import { MATCH_LENGTH_OPTIONS, TARGET_INTERVAL_RANGE } from 'shared';
+import { MATCH_LENGTH_OPTIONS, TARGET_INTERVAL_RANGE, ROUNDS_MODE_TOTAL } from 'shared';
 import type { MatchLengthTier, GameRoomSnapshot } from 'shared';
 import type { GameRoomInternal } from './roomManager';
 
@@ -28,10 +28,12 @@ export function toSnapshot(room: GameRoomInternal): GameRoomSnapshot {
   return {
     code: room.code,
     phase: room.phase,
+    gameMode: room.gameMode,
     players,
     targetScore: room.targetScore,
     matchLengthTier: room.matchLengthTier,
     roundNumber: room.roundNumber,
+    roundsTotal: room.roundsTotal,
     currentRound,
     roundHistory: room.roundHistory,
   };
@@ -79,6 +81,14 @@ export function transitionToTiming(room: GameRoomInternal): number {
 export function setMatchLength(room: GameRoomInternal, tier: MatchLengthTier): void {
   const option = MATCH_LENGTH_OPTIONS.find(o => o.tier === tier);
   if (!option) return;
+  room.gameMode = 'race';
   room.matchLengthTier = tier;
   room.targetScore = randInt(option.min, option.max);
+}
+
+export function setRoundsMode(room: GameRoomInternal): void {
+  room.gameMode = 'rounds';
+  room.roundsTotal = ROUNDS_MODE_TOTAL;
+  room.targetScore = null;
+  room.matchLengthTier = null;
 }
