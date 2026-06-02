@@ -53,15 +53,17 @@ export function computeRoundResult(room: GameRoomInternal): RoundResult {
   const winner = winnerId !== null ? room.players.find(p => p.id === winnerId) : null;
   const streakBonus = winner ? winner.streak + 1 : 0;
 
+  // Wagers are deducted from scores at submission time, so:
+  //   winner receives the full pot back, loser gets nothing back
+  //   tie: each player's wager is returned
   const scoreDeltas: { [id: string]: number } = {};
   if (winnerId !== null) {
     for (const player of room.players) {
       scoreDeltas[player.id] = player.id === winnerId
         ? pot + 1 + accuracyBonus + streakBonus
-        : -(wagers[player.id] ?? 0);
+        : 0;
     }
   } else {
-    // tie: wagers returned, no streak change
     for (const player of room.players) {
       scoreDeltas[player.id] = wagers[player.id] ?? 0;
     }

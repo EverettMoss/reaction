@@ -135,7 +135,10 @@ export function registerHandlers(io: IO): void {
       if (room.currentRound.wagers[socket.id] !== null) return; // already wagered
 
       room.currentRound.wagers[socket.id] = wager;
-      if (player) player.wager = wager;
+      if (player) {
+        player.score = Math.max(0, player.score - wager);
+        player.wager = wager;
+      }
 
       emitRoomStateUpdate(io, room.code, toSnapshot(room));
     });
